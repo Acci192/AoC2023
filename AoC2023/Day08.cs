@@ -3,19 +3,18 @@ using AoCHelper;
 using System.Text.RegularExpressions;
 
 namespace AoC2023;
-public class Day08 : BaseDay
+public partial class Day08 : BaseDay
 {
     public override ValueTask<string> Solve_1()
     {
         var input = InputFilePath.Read().ToList();
 
-        var inputRegex = new Regex(@"(.*) = \((.*), (.*)\)");
 
         var map = new Dictionary<string, (string left, string right)>();
 
         foreach (var s in input.Skip(2))
         {
-            var match = inputRegex.Match(s);
+            var match = InputRegex().Match(s);
             map[match.Groups[1].Value] = (match.Groups[2].Value, match.Groups[3].Value);
         }
 
@@ -40,7 +39,6 @@ public class Day08 : BaseDay
             steps++;
         }
 
-
         return new(steps.ToString());
     }
 
@@ -48,13 +46,11 @@ public class Day08 : BaseDay
     {
         var input = InputFilePath.Read().ToList();
 
-        var inputRegex = new Regex(@"(.*) = \((.*), (.*)\)");
-
         var map = new Dictionary<string, (string left, string right)>();
 
         foreach (var s in input.Skip(2))
         {
-            var match = inputRegex.Match(s);
+            var match = InputRegex().Match(s);
             map[match.Groups[1].Value] = (match.Groups[2].Value, match.Groups[3].Value);
         }
 
@@ -63,11 +59,8 @@ public class Day08 : BaseDay
         var positions = map.Keys.Where(x => x.Last() == 'A').ToList();
 
         var steps = 0;
+        var done = new Dictionary<int, int>();
 
-        var test = Enumerable.Range(0, positions.Count).ToDictionary(x => x, x => new HashSet<int>());
-
-        var test1 = new List<int>();
-        var done = new HashSet<int>();
         while (positions.Count(x => x.Last() == 'Z') != positions.Count && done.Count != positions.Count)
         {
             var tempPosition = positions.ToList();
@@ -86,9 +79,7 @@ public class Day08 : BaseDay
 
                 if (position.position.Last() == 'Z')
                 {
-                    done.Add(position.i);
-
-                    test1.Add(steps);
+                    done[position.i] = steps;
                 }
             }
             positions = tempPosition;
@@ -96,11 +87,13 @@ public class Day08 : BaseDay
             steps++;
         }
 
-
-        return new(LCM(test1.Select(x => (long)x).ToArray()).ToString());
+        return new(LCM(done.Values.Select(x => (long)x).ToArray()).ToString());
     }
 
-    static long LCM(long[] numbers) => numbers.Aggregate(lcm);
-    static long lcm(long a, long b) => Math.Abs(a * b) / GCD(a, b);
+    static long LCM(long[] numbers) => numbers.Aggregate(LCM);
+    static long LCM(long a, long b) => Math.Abs(a * b) / GCD(a, b);
     static long GCD(long a, long b) => b == 0 ? a : GCD(b, a % b);
+
+    [GeneratedRegex(@"(.*) = \((.*), (.*)\)")]
+    private static partial Regex InputRegex();
 }
