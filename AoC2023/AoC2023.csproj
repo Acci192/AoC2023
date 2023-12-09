@@ -12,9 +12,9 @@
     <PackageReference Include="Dumpify" Version="0.6.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Inputs\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Inputs\" />
+	</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AoC.Utils\AoC.Utils.csproj" />
